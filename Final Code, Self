@@ -1,0 +1,68 @@
+let video;
+let poseNet;
+let noseX = 0;
+let noseY = 0;
+let eyelX = 0;
+let eyelY = 0;
+let eye2X = 0;
+let eye2Y = 0;
+ 
+function setup() {
+  createCanvas(1000, 1000);
+  video = createCapture(VIDEO);
+  video.hide();
+  poseNet = ml5.poseNet(video, modelReady);
+  poseNet.on('pose', gotPoses);
+  let d = random (100);
+}
+
+function gotPoses(poses) {
+  // console.log(poses);
+  if (poses.length > 0) {
+    let nX = poses[0].pose.keypoints[0].position.x;
+    let nY = poses[0].pose.keypoints[0].position.y;
+    let eX = poses[0].pose.keypoints[1].position.x;
+    let eY = poses[0].pose.keypoints[1].position.y;
+    let aX = poses[0].pose.keypoints[2].position.x;
+    let aY = poses[0].pose.keypoints[2].position.y;
+    noseX = lerp(noseX, nX, 0.5);
+    noseY = lerp(noseY, nY, 0.5);
+    eyelX = lerp(eyelX, eX, 0.5);
+    eyelY = lerp(eyelY, eY, 0.5);
+    eye2X = lerp(eye2X, aX, 0.5);
+    eye2Y = lerp(eye2Y, aY, 0.5);
+  }
+}
+
+function modelReady() {
+  console.log('model ready');
+}
+
+function draw() {
+  //image(video, 0, 0);
+  
+  noStroke();
+  
+  let d = dist(noseX, noseY, eyelX, eyelY);
+
+  fill(200, 149, 114);
+  ellipse(noseX, noseY, d);
+  fill(191, 127, 84);
+  ellipse(noseX, noseY, d-10);
+  fill(300);
+  ellipse(noseX, noseY, 15);
+  fill(121, 65, 28);
+  ellipse(eyelX, eyelY, d);
+  fill(0,0,0);
+  ellipse(eyelX, eyelY, 25);
+  fill(121, 65, 28);
+  ellipse(eye2X, eye2Y, 50);
+  fill(0,0,0);
+  ellipse(eye2X, eye2Y, 10);
+  fill(0,0,0);
+  ellipse(eye2X-d, eye2Y-d, d-5);
+  fill(77, 13, 199);
+  ellipse(eye2X-d, eye2Y-d, d-25);
+
+
+}
